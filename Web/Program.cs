@@ -1,15 +1,22 @@
+using DapperAccess.Infrastructure;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+var connectionString = builder.Configuration.GetConnectionString("Default")
+    ?? builder.Configuration.GetConnectionString("SqlServer")
+    ?? throw new Exception("Connection string is not provided");
+
+builder.Services.AddDapperDataContext(connectionString);
+
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
 }
+
 app.UseStaticFiles();
 
 app.UseRouting();
