@@ -1,0 +1,42 @@
+﻿@model CarCreateModel
+
+@{
+    ViewData["Title"] = "Create Car";
+}
+
+<h2>@ViewData["Title"]</h2>
+<hr />
+
+<form method="post" enctype="multipart/form-data">
+    <div>
+        @ViewData["Status"]
+    </div>
+    <div>
+        <label asp-for="@Model.Company"></label>
+        <br />
+        <input asp-for="@Model.Company" />
+    </div>
+    <div>
+        <label asp-for="@Model.Model"></label>
+        <br />
+        <input asp-for="@Model.Model" />
+    </div>
+    <div>
+        <label asp-for="@Model.Year"></label>
+        <br />
+        <input asp-for="@Model.Year" />
+    </div>
+    <div>
+        <label asp-for="@Model.Displacement"></label>
+        <br />
+        <input asp-for="@Model.Displacement" />
+    </div>
+    <div>
+        <label asp-for="@Model.Picture"></label>
+        <br />
+        <input asp-for="@Model.Picture" accept="image/*" />
+    </div>
+    <div>
+        <input type="submit" value="Create" />
+    </div>
+</form>

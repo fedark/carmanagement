@@ -15,9 +15,29 @@ public class UserRoleDataSet : IDataSet<UserRole>
         tableName_ = tableName;
     }
 
+    public Task AddAsync(UserRole entity)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task DeleteAsync(string id)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<IEnumerable<UserRole>> GetAllAsync()
+    {
+        throw new NotImplementedException();
+    }
+
     public async Task<UserRole?> GetAsync(string id)
     {
         var cmd = $"select * from {tableName_} where Id = @id";
         return (await connection_.QueryAsync<UserRole>(cmd, new { Id = id })).SingleOrDefault();
+    }
+
+    public Task UpdateAsync(UserRole entity)
+    {
+        throw new NotImplementedException();
     }
 }

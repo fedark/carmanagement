@@ -1,0 +1,46 @@
+﻿@model IEnumerable<CarViewModel>
+
+@{
+    ViewData["Title"] = "Cars";
+}
+
+<h2>@ViewData["Title"]</h2>
+<hr />
+
+<div>
+    <a asp-action="Create">Create</a>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Picture</th>
+            <th>Company</th>
+            <th>Model</th>
+            <th>Year Manufactured</th>
+            <th>Displacement</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var car in Model)
+        {
+            <tr>
+                <td>
+                    <img src="@Url.Action("Picture", new { Id = car.Id })" class="img-small" />
+                </td>
+                <td>
+                    @car.Company
+                </td>
+                <td>
+                    @car.Model
+                </td>
+                <td>
+                    @car.Year
+                </td>
+                <td>
+                    @car.Displacement
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

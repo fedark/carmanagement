@@ -2,4 +2,8 @@
 public interface IDataSet<TEntity> where TEntity : class
 {
     Task<TEntity?> GetAsync(string id);
+    Task<IEnumerable<TEntity>> GetAllAsync();
+    Task AddAsync(TEntity entity);
+    Task UpdateAsync(TEntity entity);
+    Task DeleteAsync(string id);
 }

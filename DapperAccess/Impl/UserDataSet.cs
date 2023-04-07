@@ -15,9 +15,29 @@ public class UserDataSet : IDataSet<User>
         tableName_ = tableName;
     }
 
+    public Task AddAsync(User entity)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task DeleteAsync(string id)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<IEnumerable<User>> GetAllAsync()
+    {
+        throw new NotImplementedException();
+    }
+
     public async Task<User?> GetAsync(string id)
     {
         var cmd = $"select * from {tableName_} where Id = @id";
         return (await connection_.QueryAsync<User>(cmd, new { Id = id })).SingleOrDefault();
+    }
+
+    public Task UpdateAsync(User entity)
+    {
+        throw new NotImplementedException();
     }
 }

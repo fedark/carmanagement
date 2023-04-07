@@ -1,7 +1,8 @@
 create table Companies (
 	Id nvarchar(50) not null,
 	Name nvarchar(50) not null,
-	constraint PK_Companies_Id primary key (Id)
+	constraint PK_Companies_Id primary key (Id),
+	constraint UQ_Companies_Name unique (Name)
 );
 go
 
@@ -19,6 +20,7 @@ create table Cars (
 	Id nvarchar(50) not null,
 	Displacement int null,
 	Picture varbinary(max) not null,
+	PictureType nvarchar(20) not null,
 	ModelId nvarchar(50) not null,
 	constraint PK_Cars_Id primary key (Id),
 	constraint FK_Cars_ModelId foreign key (ModelId) references Models (Id) on delete cascade

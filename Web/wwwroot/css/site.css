@@ -20,3 +20,8 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.img-small {
+    max-width: 7rem;
+    max-height: 7rem;
+}

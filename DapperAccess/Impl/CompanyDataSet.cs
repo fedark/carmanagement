@@ -15,9 +15,33 @@ public class CompanyDataSet : IDataSet<Company>
         tableName_ = tableName;
     }
 
+    public Task AddAsync(Company entity)
+    {
+        var cmd = $"insert into {tableName_} values (@id, @name)";
+        return connection_.ExecuteAsync(cmd, entity);
+    }
+
+    public Task DeleteAsync(string id)
+    {
+        var cmd = $"delete from {tableName_} where {nameof(Company.Id)} = @id";
+        return connection_.ExecuteAsync(cmd, new { id });
+    }
+
+    public Task<IEnumerable<Company>> GetAllAsync()
+    {
+        var cmd = $"select * from {tableName_}";
+        return connection_.QueryAsync<Company>(cmd);
+    }
+
     public async Task<Company?> GetAsync(string id)
     {
-        var cmd = $"select * from {tableName_} where Id = @id";
-        return (await connection_.QueryAsync<Company>(cmd, new { Id = id })).SingleOrDefault();
+        var cmd = $"select * from {tableName_} where {nameof(Company.Id)} = @id";
+        return (await connection_.QueryAsync<Company>(cmd, new { id })).SingleOrDefault();
+    }
+
+    public Task UpdateAsync(Company entity)
+    {
+        var cmd = $"update {tableName_} set {nameof(Company.Name)} = @name where {nameof(Company.Id)} = @id";
+        return connection_.ExecuteAsync(cmd, entity);
     }
 }

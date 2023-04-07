@@ -7,9 +7,13 @@ public class DapperDataContext : IDataContext
 {
     private readonly SqlConnection connection_;
 
-    public IDataSet<Car> Cars => new CarDataSet(connection_, "Cars");
-    public IDataSet<Company> Companies => new CompanyDataSet(connection_, "Companies");
-    public IDataSet<Model> Models => new ModelDataSet(connection_, "Models");
+    private readonly string CarTable = "Cars";
+    private readonly string CompanyTable = "Companies";
+    private readonly string ModelTable = "Models";
+
+    public IDataSet<Car> Cars => new CarDataSet(connection_, CarTable, ModelTable, CompanyTable);
+    public IDataSet<Company> Companies => new CompanyDataSet(connection_, CompanyTable);
+    public IDataSet<Model> Models => new ModelDataSet(connection_, ModelTable, CompanyTable);
 
     public IDataSet<User> Users => new UserDataSet(connection_, "Users");
     public IDataSet<Role> Roles => new RoleDataSet(connection_, "Roles");

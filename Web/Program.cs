@@ -1,4 +1,5 @@
 using DapperAccess.Infrastructure;
+using Web.Models.Mappings;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,6 +8,7 @@ var connectionString = builder.Configuration.GetConnectionString("Default")
     ?? throw new Exception("Connection string is not provided");
 
 builder.Services.AddDapperDataContext(connectionString);
+builder.Services.AddAutoMapper(typeof(CarMappingProfile));
 
 builder.Services.AddControllersWithViews();
 
