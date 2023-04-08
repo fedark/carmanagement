@@ -21,10 +21,14 @@ public class CarController : Controller
         mapper_ = mapper;
     }
 
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(CarSortViewModel? sortModel)
     {
         var cars = await context_.Cars.GetAllAsync();
-        return View(mapper_.Map<IEnumerable<CarViewModel>>(cars));
+        var viewCars = mapper_.Map<IEnumerable<CarViewModel>>(cars);
+
+        ApplySorting(ref viewCars, sortModel);
+        
+        return View(new CarListViewModel { Cars = viewCars, SortModel = sortModel });
     }
 
     [HttpGet]
@@ -172,5 +176,26 @@ public class CarController : Controller
         picture = memoryStream.ToArray();
 
         return true;
+    }
+
+    private void ApplySorting(ref IEnumerable<CarViewModel> cars, CarSortViewModel? sortModel)
+    {
+        if (sortModel is null)
+        {
+            return;
+        }
+
+        cars = sortModel switch
+        {
+            (CarSortKey.Company, true) => cars.OrderBy(c => c.Company),
+            (CarSortKey.Company, false) => cars.OrderByDescending(c => c.Company),
+            (CarSortKey.Model, true) => cars.OrderBy(c => c.Model),
+            (CarSortKey.Model, false) => cars.OrderByDescending(c => c.Model),
+            (CarSortKey.Year, true) => cars.OrderBy(c => c.Year),
+            (CarSortKey.Year, false) => cars.OrderByDescending(c => c.Year),
+            (CarSortKey.Displacement, true) => cars.OrderBy(c => c.Displacement),
+            (CarSortKey.Displacement, false) => cars.OrderByDescending(c => c.Displacement),
+            _ => throw new Exception("Invalid sort key")
+        };
     }
 }

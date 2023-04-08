@@ -1,4 +1,4 @@
-﻿@model IEnumerable<CarViewModel>
+﻿@model CarListViewModel
 
 @{
     ViewData["Title"] = "Cars";
@@ -15,15 +15,23 @@
     <thead>
         <tr>
             <th>Picture</th>
-            <th>Company</th>
-            <th>Model</th>
-            <th>Year Manufactured</th>
-            <th>Displacement</th>
+            <th>
+                <sort-header key="@CarSortKey.Company" state="@Model.SortModel">Company</sort-header>
+            </th>
+            <th>
+                <sort-header key="@CarSortKey.Model" state="@Model.SortModel">Model</sort-header>
+            </th>
+            <th>
+                <sort-header key="@CarSortKey.Year" state="@Model.SortModel">Year Manufactured</sort-header>
+            </th>
+            <th>
+                <sort-header key="@CarSortKey.Displacement" state="@Model.SortModel">Displacement</sort-header>
+            </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var car in Model)
+        @foreach (var car in Model.Cars)
         {
             <tr>
                 <td>
