@@ -16,52 +16,16 @@
         <tr>
             <th>Filter: </th>
             <th>
-                <form method="get">
-                    <input name="sortKey" type="hidden" value="@Model.State.SortModel?.SortKey" />
-                    <input name="ascending" type="hidden" value="@Model.State.SortModel?.Ascending" />
-                    <input name="model" type="hidden" value="@Model.State.FilterModel.Model" />
-                    <input name="year" type="hidden" value="@Model.State.FilterModel.Year" />
-                    <input name="displacement" type="hidden" value="@Model.State.FilterModel.Displacement" />
-
-                    <select name="company" asp-items="@Model.State.FilterModel.Company"
-                            onchange="this.form.submit()"></select>
-                </form>
+                <select-filter name="company" items="@Model.State.FilterModel.Company" state="@Model.State"></select-filter>
             </th>
             <th>
-                <form method="get">
-                    <input name="sortKey" type="hidden" value="@Model.State.SortModel?.SortKey" />
-                    <input name="ascending" type="hidden" value="@Model.State.SortModel?.Ascending" />
-                    <input name="company" type="hidden" value="@Model.State.FilterModel.Company.SelectedValue" />
-                    <input name="year" type="hidden" value="@Model.State.FilterModel.Year" />
-                    <input name="displacement" type="hidden" value="@Model.State.FilterModel.Displacement" />
-
-                    <input name="model" asp-for="@Model.State.FilterModel.Model" value="@Model.State.FilterModel.Model" />
-                    <input type="submit" value="Filter" />
-                </form>
+                <filter name="model" value="@Model.State.FilterModel.Model" state="@Model.State"></filter>
             </th>
             <th>
-                <form method="get">
-                    <input name="sortKey" type="hidden" value="@Model.State.SortModel?.SortKey" />
-                    <input name="ascending" type="hidden" value="@Model.State.SortModel?.Ascending" />
-                    <input name="company" type="hidden" value="@Model.State.FilterModel.Company.SelectedValue" />
-                    <input name="model" type="hidden" value="@Model.State.FilterModel.Model" />
-                    <input name="displacement" type="hidden" value="@Model.State.FilterModel.Displacement" />
-
-                    <input name="year" asp-for="@Model.State.FilterModel.Year" value="@Model.State.FilterModel.Year" />
-                    <input type="submit" value="Filter" />
-                </form>
+                <filter type="number" name="year" value="@Model.State.FilterModel.Year" state="@Model.State"></filter>
             </th>
             <th>
-                <form method="get">
-                    <input name="sortKey" type="hidden" value="@Model.State.SortModel?.SortKey" />
-                    <input name="ascending" type="hidden" value="@Model.State.SortModel?.Ascending" />
-                    <input name="company" type="hidden" value="@Model.State.FilterModel.Company.SelectedValue" />
-                    <input name="model" type="hidden" value="@Model.State.FilterModel.Model" />
-                    <input name="year" type="hidden" value="@Model.State.FilterModel.Year" />
-
-                    <input name="displacement" asp-for="@Model.State.FilterModel.Displacement" value="@Model.State.FilterModel.Displacement" />
-                    <input type="submit" value="Filter" />
-                </form>
+                <filter type="number" name="displacement" value="@Model.State.FilterModel.Displacement" state="@Model.State"></filter>
             </th>
             <th>
                 <form method="get">
