@@ -1,0 +1,38 @@
+﻿@model CarViewModel
+
+@{
+    ViewData["Title"] = "Delete Car";
+}
+
+<h2>@ViewData["Title"]</h2>
+<h3>Are you sure you want to delete this car?</h3>
+<hr />
+
+<div>
+    <div>
+        <img src="@Url.Action("Picture", new { Model.Id })" class="img-small" />
+    </div>
+    <div>
+        <label asp-for="@Model.Company"></label>
+        <label>: @Model.Company</label>
+    </div>
+    <div>
+        <label asp-for="@Model.Model"></label>
+        <label>: @Model.Model</label>
+    </div>
+    <div>
+        <label asp-for="@Model.Year"></label>
+        <label>: @Model.Year</label>
+    </div>
+    <div>
+        <label asp-for="@Model.Displacement"></label>
+        <label>: @Model.Displacement</label>
+    </div>
+
+    <div>
+        <form method="post">
+            <input asp-for="@Model.Id" type="hidden" />
+            <input type="submit" value="Delete" />
+        </form>
+    </div>
+</div>

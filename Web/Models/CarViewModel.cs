@@ -16,5 +16,5 @@ public class CarViewModel
     public int Year { get; set; }
 
     [Display(Name = "Displacement")]
-    public int? Displacement { get; set; }
+    public double? Displacement { get; set; }
 }

@@ -48,17 +48,108 @@ public class CarController : Controller
             return View(viewCar);
         }
 
-        var company = new Company { Name = viewCar.Company };
-        var model = new Model { Name = viewCar.Model, Year = viewCar.Year, Company = company };
-        var car = new Car { Displacement = viewCar.Displacement, Picture = picture, PictureType = viewCar.Picture.ContentType, Model = model };
+        var car = mapper_.Map<Car>(viewCar);
+        car.Picture = picture;
         await context_.Cars.AddAsync(car);
 
+        logger_.LogInformation($"Added car with id '{car.Id}'");
         return RedirectToAction(nameof(Index));
     }
 
     [HttpGet]
-    public async Task<IActionResult> Picture(string id)
+    public async Task<IActionResult> Edit(string? id)
     {
+        if (id is null)
+        {
+            return NotFound();
+        }
+
+        var car = await context_.Cars.GetAsync(id);
+        return View(mapper_.Map<CarEditModel>(car));
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Edit(CarEditModel viewCar)
+    {
+        if (!ModelState.IsValid)
+        {
+            ViewData["Status"] = "Some values are not provided.";
+            return View(viewCar);
+        }
+
+        byte[] picture;
+        string pictureType;
+
+        if (viewCar.Picture is not null)
+        {
+            if (TryGetPictureBytes(viewCar.Picture, out var pictureBytes))
+            {
+                picture = pictureBytes;
+                pictureType = viewCar.Picture.ContentType;
+            }
+            else
+            {
+                ViewData["Status"] = "The picture should be less than 4MB.";
+                return View(viewCar);
+            }
+        }
+        else
+        {
+            var oldCar = await context_.Cars.GetAsync(viewCar.Id);
+            if (oldCar is not null)
+            {
+                picture = oldCar.Picture;
+                pictureType = oldCar.PictureType;
+            }
+            else
+            {
+                ViewData["Status"] = "The picture should be provided.";
+                return View(viewCar);
+            }
+        }
+        
+        var car = mapper_.Map<Car>(viewCar);
+        car.Picture = picture;
+        car.PictureType = pictureType;
+        await context_.Cars.UpdateAsync(car);
+
+        logger_.LogInformation($"Updated car with id '{car.Id}'");
+        return RedirectToAction(nameof(Index));
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Delete(string? id)
+    {
+        if (id is null)
+        {
+            return NotFound();
+        }
+
+        var car = await context_.Cars.GetAsync(id);
+        return View(mapper_.Map<CarViewModel>(car));
+    }
+
+    [HttpPost]
+    [ActionName("Delete")]
+    public async Task<IActionResult> DeleteConfirm(string? id)
+    {
+        if (id is null)
+        {
+            return NotFound();
+        }
+
+        await context_.Cars.DeleteAsync(id);
+        return RedirectToAction(nameof(Index));
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Picture(string? id)
+    {
+        if (id is null)
+        {
+            return NotFound();
+        }
+
         var car = await context_.Cars.GetAsync(id);
         if (car is null)
         {

@@ -1,0 +1,46 @@
+﻿@model CarEditModel
+
+@{
+    ViewData["Title"] = "Edit Car";
+}
+
+<h2>@ViewData["Title"]</h2>
+<hr />
+
+<form method="post" enctype="multipart/form-data">
+    <div>
+        @ViewData["Status"]
+    </div>
+    <div>
+        <input asp-for="@Model.Id" type="hidden" />
+    </div>
+    <div>
+        <label asp-for="@Model.Company"></label>
+        <br />
+        <input asp-for="@Model.Company" value="@Model.Company" />
+    </div>
+    <div>
+        <label asp-for="@Model.Model"></label>
+        <br />
+        <input asp-for="@Model.Model" value="@Model.Model" />
+    </div>
+    <div>
+        <label asp-for="@Model.Year"></label>
+        <br />
+        <input asp-for="@Model.Year" value="@Model.Year" />
+    </div>
+    <div>
+        <label asp-for="@Model.Displacement"></label>
+        <br />
+        <input asp-for="@Model.Displacement" value="@Model.Displacement" />
+    </div>
+    <div>
+        <label asp-for="@Model.Picture"></label>
+        <br />
+        <img src="@Url.Action("Picture", new { Model.Id })" class="img-small" />
+        <input asp-for="@Model.Picture" accept="image/*" />
+    </div>
+    <div>
+        <input type="submit" value="Save" />
+    </div>
+</form>

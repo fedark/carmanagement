@@ -18,7 +18,7 @@ go
 
 create table Cars (
 	Id nvarchar(50) not null,
-	Displacement int null,
+	Displacement float null,
 	Picture varbinary(max) not null,
 	PictureType nvarchar(20) not null,
 	ModelId nvarchar(50) not null,

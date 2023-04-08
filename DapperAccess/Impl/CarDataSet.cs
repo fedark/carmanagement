@@ -95,8 +95,9 @@ public class CarDataSet : IDataSet<Car>
 
         cmd = @$"select {nameof(Model.Id)} from {referenceTableName_}
                     where {nameof(Model.Name)} = @name
+                    and {nameof(Model.Year)} = @year
                     and CompanyId = @companyId";
-        reference = (await connection_.QueryAsync<string>(cmd, new { model.Name, CompanyId = model.Company.Id })).SingleOrDefault();
+        reference = (await connection_.QueryAsync<string>(cmd, new { model.Name, model.Year, CompanyId = model.Company.Id })).SingleOrDefault();
 
         if (reference is null)
         {

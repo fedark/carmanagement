@@ -2,8 +2,10 @@
 
 namespace Web.Models;
 
-public class CarCreateModel
+public class CarEditModel
 {
+    public string Id { get; set; } = default!;
+
     [Display(Name = "Company")]
     public string Company { get; set; } = default!;
 
@@ -18,5 +20,5 @@ public class CarCreateModel
 
     [Display(Name = "Picture")]
     [DataType(DataType.Upload)]
-    public IFormFile Picture { get; set; } = default!;
+    public IFormFile? Picture { get; set; }
 }

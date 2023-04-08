@@ -19,6 +19,7 @@
             <th>Model</th>
             <th>Year Manufactured</th>
             <th>Displacement</th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -26,7 +27,7 @@
         {
             <tr>
                 <td>
-                    <img src="@Url.Action("Picture", new { Id = car.Id })" class="img-small" />
+                    <img src="@Url.Action("Picture", new { car.Id })" class="img-small" />
                 </td>
                 <td>
                     @car.Company
@@ -39,6 +40,10 @@
                 </td>
                 <td>
                     @car.Displacement
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@car.Id">Edit</a>
+                    <a asp-action="Delete" asp-route-id="@car.Id">Delete</a>
                 </td>
             </tr>
         }
