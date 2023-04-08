@@ -44,7 +44,8 @@ public class CarController : Controller
             Displacement = filter?.Displacement
         };
         
-        return View(new CarListViewModel { Cars = viewCars, SortModel = sortModel, FilterModel = filterModel });
+        var carState = new CarStateModel { SortModel = sortModel, FilterModel = filterModel };
+        return View(new CarListViewModel { Cars = viewCars, State = carState });
     }
 
     [HttpGet]

@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Razor.TagHelpers;
@@ -16,7 +15,7 @@ public class SortHeaderTagHelper : TagHelper
     public ViewContext ViewContext { get; set; } = default!;
 
     public CarSortKey Key { get; set; } = default!;
-    public CarSortViewModel? State { get; set; } = default!;
+    public CarStateModel State { get; set; } = default!;
     public string? Action { get; set; }
 
     public SortHeaderTagHelper(IUrlHelperFactory urlFactory)
@@ -29,16 +28,22 @@ public class SortHeaderTagHelper : TagHelper
         output.TagName = "a";
 
         var urlHelper = urlFactory_.GetUrlHelper(ViewContext);
-        var requestAscending = State is not null && Key == State.SortKey ? !State.Ascending : true;
-        var url = urlHelper.Action(Action, new { SortKey = Key, Ascending = requestAscending });
+        var requestAscending = Key == State.SortModel?.SortKey ? !State.SortModel.Ascending : true;
+
+        var requestState = (CarStateModel)State.Clone();
+        requestState.SortModel ??= new CarSortViewModel();
+        requestState.SortModel.SortKey = Key;
+        requestState.SortModel.Ascending = requestAscending;
+
+        var url = urlHelper.ActionWithCarState(Action, requestState);
         output.Attributes.Add("href", url);
 
-        if (State is not null && Key == State.SortKey)
+        if (Key == State.SortModel?.SortKey)
         {
             var i = new TagBuilder("i");
             i.AddCssClass("bi");
 
-            if (State.Ascending)
+            if (State.SortModel.Ascending)
             {
                 i.AddCssClass("bi-caret-up-fill");
             }
