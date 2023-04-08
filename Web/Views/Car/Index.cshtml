@@ -29,6 +29,38 @@
             </th>
             <th></th>
         </tr>
+        <tr>
+            <th></th>
+            <th>
+                <form method="get">
+                    <select name="company" asp-items="@Model.FilterModel.Company"
+                            onchange="this.form.submit()"></select>
+                </form>
+            </th>
+            <th>
+                <form method="get">
+                    <input name="model" asp-for="@Model.FilterModel.Model" value="@Model.FilterModel.Model" />
+                    <input type="submit" value="Filter" />
+                </form>
+            </th>
+            <th>
+                <form method="get">
+                    <input name="year" asp-for="@Model.FilterModel.Year" value="@Model.FilterModel.Year" />
+                    <input type="submit" value="Filter" />
+                </form>
+            </th>
+            <th>
+                <form method="get">
+                    <input name="displacement" asp-for="@Model.FilterModel.Displacement" value="@Model.FilterModel.Displacement" />
+                    <input type="submit" value="Filter" />
+                </form>
+            </th>
+            <th>
+                <form method="get">
+                    <input type="submit" value="Reset" />
+                </form>
+            </th>
+        </tr>
     </thead>
     <tbody>
         @foreach (var car in Model.Cars)

@@ -3,11 +3,15 @@ using AutoMapper;
 using Data.Access.Abstractions;
 using Data.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Web.Models;
 
 namespace Web.Controllers;
 public class CarController : Controller
 {
+    private static readonly string AllFilter = "All";
+
     private readonly ILogger<CarController> logger_;
     private readonly IDataContext context_;
     private readonly IMapper mapper_;
@@ -21,14 +25,26 @@ public class CarController : Controller
         mapper_ = mapper;
     }
 
-    public async Task<IActionResult> Index(CarSortViewModel? sortModel)
+    public async Task<IActionResult> Index(CarSortViewModel? sortModel, CarFilterRequestModel? filter)
     {
         var cars = await context_.Cars.GetAllAsync();
         var viewCars = mapper_.Map<IEnumerable<CarViewModel>>(cars);
 
+        var companies = viewCars.Select(c => c.Company).Distinct().OrderBy(c => c).ToList();
+        companies.Insert(0, AllFilter);
+
         ApplySorting(ref viewCars, sortModel);
+        ApplyFiltering(ref viewCars, filter);
+
+        var filterModel = new CarFilterViewModel
+        {
+            Company = new SelectList(companies, filter?.Company ?? AllFilter),
+            Model = filter?.Model,
+            Year = filter?.Year,
+            Displacement = filter?.Displacement
+        };
         
-        return View(new CarListViewModel { Cars = viewCars, SortModel = sortModel });
+        return View(new CarListViewModel { Cars = viewCars, SortModel = sortModel, FilterModel = filterModel });
     }
 
     [HttpGet]
@@ -197,5 +213,30 @@ public class CarController : Controller
             (CarSortKey.Displacement, false) => cars.OrderByDescending(c => c.Displacement),
             _ => throw new Exception("Invalid sort key")
         };
+    }
+
+    private void ApplyFiltering(ref IEnumerable<CarViewModel> cars, CarFilterRequestModel? filter)
+    {
+        if (filter is null)
+        {
+            return;
+        }
+
+        if (filter.Company is not null && filter.Company != AllFilter)
+        {
+            cars = cars.Where(c => c.Company.Contains(filter.Company, StringComparison.OrdinalIgnoreCase));
+        }
+        if (filter.Model is not null)
+        {
+            cars = cars.Where(c => c.Model.Contains(filter.Model, StringComparison.OrdinalIgnoreCase));
+        }
+        if (filter.Year is not null)
+        {
+            cars = cars.Where(c => c.Year == filter.Year);
+        }
+        if (filter.Displacement is not null)
+        {
+            cars = cars.Where(c => c.Displacement == filter.Displacement);
+        }
     }
 }
