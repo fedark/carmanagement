@@ -11,13 +11,16 @@ public class DapperDataContext : IDataContext
     private readonly string CompanyTable = "Companies";
     private readonly string ModelTable = "Models";
 
+    private readonly string UserTable = "Users";
+    private readonly string RoleTable = "Roles";
+    private readonly string UserRoleTable = "UserRoles";
+
     public IDataSet<Car> Cars => new CarDataSet(connection_, CarTable, ModelTable, CompanyTable);
     public IDataSet<Company> Companies => new CompanyDataSet(connection_, CompanyTable);
     public IDataSet<Model> Models => new ModelDataSet(connection_, ModelTable, CompanyTable);
 
-    public IDataSet<User> Users => new UserDataSet(connection_, "Users");
-    public IDataSet<Role> Roles => new RoleDataSet(connection_, "Roles");
-    public IDataSet<UserRole> UserRoles => new UserRoleDataSet(connection_, "UserRoles");
+    public IDataSet<User> Users => new UserDataSet(connection_, UserTable, UserRoleTable, RoleTable);
+    public IDataSet<Role> Roles => new RoleDataSet(connection_, RoleTable, UserRoleTable, UserTable);
 
     public DapperDataContext(string connectionString)
     {

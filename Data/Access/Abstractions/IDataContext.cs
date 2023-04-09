@@ -9,5 +9,4 @@ public interface IDataContext : IDisposable
 
     IDataSet<User> Users { get; }
     IDataSet<Role> Roles { get; }
-    IDataSet<UserRole> UserRoles { get; }
 }

@@ -8,36 +8,74 @@ public class RoleDataSet : IDataSet<Role>
 {
     private readonly SqlConnection connection_;
     private readonly string tableName_;
+    private readonly string userRoleTable_;
+    private readonly string userTable_;
 
-    public RoleDataSet(SqlConnection connection, string tableName)
+    public RoleDataSet(SqlConnection connection, string tableName, string userRoleTable, string userTable)
     {
         connection_ = connection;
         tableName_ = tableName;
+        userRoleTable_ = userRoleTable;
+        userTable_ = userTable;
     }
 
-    public Task AddAsync(Role entity)
+    public async Task AddAsync(Role entity)
     {
-        throw new NotImplementedException();
+        var cmd = $"insert into {tableName_} values (@id, @name)";
+        await connection_.ExecuteAsync(cmd, entity);
+
+        var userCmd = $"insert into {userRoleTable_} values (@userId, @roleId)";
+        await connection_.ExecuteAsync(userCmd, entity.Users.Select(u => new { UserId = u.Id, RoleId = entity.Id }));
     }
 
     public Task DeleteAsync(string id)
     {
-        throw new NotImplementedException();
+        var cmd = $"delete from {tableName_} where {nameof(Role.Id)} = @id";
+        return connection_.ExecuteAsync(cmd, new { id });
     }
 
     public Task<IEnumerable<Role>> GetAllAsync()
     {
-        throw new NotImplementedException();
+        var cmd = $@"select r.*, u.* from {tableName_} r
+                        join {userRoleTable_} ur on r.{nameof(Role.Id)} = ur.RoleId
+                        join {userTable_} u on ur.UserId = u.{nameof(User.Id)}";
+        return connection_.QueryAsync<Role, User, Role>(cmd, (role, user) =>
+        {
+            role.Users.Add(user);
+            return role;
+        });
     }
 
     public async Task<Role?> GetAsync(string id)
     {
-        var cmd = $"select * from {tableName_} where Id = @id";
-        return (await connection_.QueryAsync<Role>(cmd, new { Id = id })).SingleOrDefault();
+        var cmd = $@"select r.*, u.* from {tableName_} r
+                        join {userRoleTable_} ur on r.{nameof(Role.Id)} = ur.RoleId
+                        join {userTable_} u on ur.UserId = u.{nameof(User.Id)}
+                        where @r.{nameof(Role.Id)} = @id";
+        return (await connection_.QueryAsync<Role, User, Role>(cmd, (role, user) =>
+        {
+            role.Users.Add(user);
+            return role;
+        },
+        new { id })).SingleOrDefault();
     }
 
-    public Task UpdateAsync(Role entity)
+    public async Task UpdateAsync(Role entity)
     {
-        throw new NotImplementedException();
+        var cmd = @$"update {tableName_} 
+                    set {nameof(Role.Name)} = @name
+                    where {nameof(Role.Id)} = @id";
+        await connection_.ExecuteAsync(cmd, entity);
+
+        var userCmd = $"select UserId from {userRoleTable_} where RoleId = @roleId";
+        var oldUsers = await connection_.QueryAsync<string>(userCmd, new { roleId = entity.Id });
+
+        var newUsers = entity.Users.Select(u => u.Id);
+
+        userCmd = $"delete from {userRoleTable_} where UserId in (@userIds) and RoleId = @roleId";
+        await connection_.ExecuteAsync(userCmd, new { UserIds = oldUsers.Except(newUsers), RoleIds = entity.Id });
+
+        userCmd = $"insert into {userRoleTable_} values (@userId, @roleId)";
+        await connection_.ExecuteAsync(userCmd, newUsers.Except(oldUsers).Select(u => new { UserId = u, RoleId = entity.Id }));
     }
 }
