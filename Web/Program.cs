@@ -10,6 +10,14 @@ var connectionString = builder.Configuration.GetConnectionString("Default")
 builder.Services.AddDapperDataContext(connectionString);
 builder.Services.AddAutoMapper(typeof(CarMappingProfile));
 
+builder.Services.AddAuthentication()
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/auth/login";
+        options.AccessDeniedPath = "/auth/denied";
+    });
+builder.Services.AddAuthorization();
+
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
@@ -23,6 +31,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(

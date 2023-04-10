@@ -2,12 +2,14 @@
 using AutoMapper;
 using Data.Access.Abstractions;
 using Data.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Web.Models;
 
 namespace Web.Controllers;
+
+[Authorize]
 public class CarController : Controller
 {
     private static readonly string AllFilter = "All";

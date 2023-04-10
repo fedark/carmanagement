@@ -1,2 +1,14 @@
-﻿<a asp-controller="Auth" asp-action="Register" class="nav-link">Register</a>
-<a asp-controller="Auth" asp-action="Login" class="nav-link">Log in</a>
+﻿@using Microsoft.AspNetCore.Authentication.Cookies;
+
+@if (User.Identities.Any(i => i.AuthenticationType == CookieAuthenticationDefaults.AuthenticationScheme))
+{
+    <label>@User.Identity?.Name</label>
+    <form asp-controller="Auth" asp-action="Logout" method="post" class="form-inline">
+        <button type="submit" class="nav-link btn btn-link">Logout</button>
+    </form>
+}
+else
+{
+    <a asp-controller="Auth" asp-action="Register" class="nav-link">Register</a>
+    <a asp-controller="Auth" asp-action="Login" class="nav-link">Log in</a>
+}

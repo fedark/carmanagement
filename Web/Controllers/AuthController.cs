@@ -1,5 +1,8 @@
-﻿using Data.Access.Abstractions;
+﻿using System.Security.Claims;
+using Data.Access.Abstractions;
 using Data.Models;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Web.Models;
@@ -8,11 +11,11 @@ namespace Web.Controllers;
 
 public class AuthController : Controller
 {
-    private readonly IDataContext contex_;
+    private readonly IDataContext context_;
 
-    public AuthController(IDataContext contex)
+    public AuthController(IDataContext context)
     {
-        contex_ = contex;
+        context_ = context;
     }
 
     public IActionResult Register()
@@ -29,7 +32,7 @@ public class AuthController : Controller
             return View(model);
         }
 
-        var user = await contex_.GetUserByNameAsync(model.UserName);
+        var user = await context_.GetUserByNameAsync(model.UserName);
         if (user is not null)
         {
             ViewData["Status"] = "The user name is already taken";
@@ -43,7 +46,7 @@ public class AuthController : Controller
 
         user.PasswordHash = passwordHash;
 
-        await contex_.Users.AddAsync(user);
+        await context_.Users.AddAsync(user);
 
         return RedirectToAction("Index", "Home");
     }
@@ -62,7 +65,7 @@ public class AuthController : Controller
             return View(model);
         }
 
-        var user = await contex_.GetUserByNameAsync(model.UserName);
+        var user = await context_.GetUserByNameAsync(model.UserName);
         if (user is null)
         {
             ViewData["Status"] = "Incorrect input";
@@ -76,6 +79,27 @@ public class AuthController : Controller
             return View(model);
         }
 
+        var claims = new List<Claim> { new(ClaimTypes.Name, user.Name) };
+        claims.AddRange(user.Roles.Select(r => new Claim(ClaimTypes.Role, r.Name)));
+
+        var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+        var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
+        
+        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claimsPrincipal);
+
         return RedirectToAction("Index", "Home");
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Logout()
+    {
+        await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+        return RedirectToAction("Index", "Home");
+    }
+
+    public IActionResult Denied()
+    {
+        return View();
     }
 }
