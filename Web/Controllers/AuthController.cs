@@ -47,4 +47,35 @@ public class AuthController : Controller
 
         return RedirectToAction("Index", "Home");
     }
+
+    public IActionResult Login()
+    {
+        return View();
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Login(UserLoginModel model)
+    {
+        if (!ModelState.IsValid)
+        {
+            ViewData["Status"] = "Incorrect input";
+            return View(model);
+        }
+
+        var user = await contex_.GetUserByNameAsync(model.UserName);
+        if (user is null)
+        {
+            ViewData["Status"] = "Incorrect input";
+            return View(model);
+        }
+
+        var passwordHasher = new PasswordHasher<User>();
+        if (passwordHasher.VerifyHashedPassword(user, user.PasswordHash, model.Password) == PasswordVerificationResult.Failed)
+        {
+            ViewData["Status"] = "Incorrect input";
+            return View(model);
+        }
+
+        return RedirectToAction("Index", "Home");
+    }
 }
