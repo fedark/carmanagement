@@ -1,0 +1,30 @@
+﻿@model UserRegisterModel
+
+@{
+    ViewData["Title"] = "Register";
+}
+
+<h2>@ViewData["Title"]</h2>
+<hr />
+
+<form method="post">
+    <div>
+        @ViewData["Status"]
+    </div>
+    <div>
+        <label asp-for="@Model.UserName"></label>
+        <br />
+        <input asp-for="@Model.UserName" />
+    </div>
+    <div>
+        <label asp-for="@Model.Password"></label>
+        <br />
+        <input asp-for="@Model.Password" />
+    </div>
+    <div>
+        <label asp-for="@Model.PasswordConfirmation"></label>
+        <br />
+        <input asp-for="@Model.PasswordConfirmation" />
+    </div>
+    <input type="submit" value="Register" />
+</form>

@@ -9,4 +9,6 @@ public interface IDataContext : IDisposable
 
     IDataSet<User> Users { get; }
     IDataSet<Role> Roles { get; }
+
+    Task<User?> GetUserByNameAsync(string name);
 }

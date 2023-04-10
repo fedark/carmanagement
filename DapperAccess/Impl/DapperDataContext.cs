@@ -1,4 +1,5 @@
-﻿using Data.Access.Abstractions;
+﻿using Dapper;
+using Data.Access.Abstractions;
 using Data.Models;
 using Microsoft.Data.SqlClient;
 
@@ -31,5 +32,11 @@ public class DapperDataContext : IDataContext
     public void Dispose()
     {
         connection_.Close();
+    }
+
+    public async Task<User?> GetUserByNameAsync(string name)
+    {
+        var cmd = $"select * from {UserTable} where {nameof(User.Name)} = @name";
+        return (await connection_.QueryAsync<User>(cmd, new { name })).SingleOrDefault();
     }
 }
