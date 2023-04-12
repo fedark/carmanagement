@@ -6,9 +6,9 @@ COPY ./DapperAccess/*.csproj ./DapperAccess/
 COPY ./Web/*.csproj ./Web/
 RUN dotnet restore ./Web/Web.csproj
 
-COPY ./Data/* ./Data/
-COPY ./DapperAccess/* ./DapperAccess/
-COPY ./Web/* ./Web/
+COPY ./Data/. ./Data/
+COPY ./DapperAccess/. ./DapperAccess/
+COPY ./Web/. ./Web/
 
 WORKDIR /carmanage/Web
 RUN dotnet publish -c Release -o publish

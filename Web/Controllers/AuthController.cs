@@ -68,7 +68,7 @@ public class AuthController : Controller
         var user = await context_.GetUserByNameAsync(model.UserName);
         if (user is null)
         {
-            ViewData["Status"] = "Incorrect input";
+            ViewData["Status"] = "The user is not registered";
             return View(model);
         }
 
