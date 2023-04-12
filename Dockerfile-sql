@@ -1,0 +1,13 @@
+FROM mcr.microsoft.com/mssql/server:2019-latest
+
+WORKDIR /carmanage/sql/init
+COPY ./Db/* ./
+
+USER root
+RUN chmod +x entrypoint.sh
+
+ENV PATH="$PATH:/opt/mssql-tools/bin"
+
+EXPOSE 1433
+
+CMD /bin/bash /carmanage/sql/init/entrypoint.sh

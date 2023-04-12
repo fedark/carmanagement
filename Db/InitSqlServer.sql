@@ -1,3 +1,11 @@
+if not exists (select * from sys.databases where name = 'CarManage')
+create database CarManage;
+go
+
+use CarManage
+go
+
+if not exists (select * from sysobjects where xtype = 'U' and name = 'Companies')
 create table Companies (
 	Id nvarchar(50) not null,
 	Name nvarchar(50) not null,
@@ -6,6 +14,7 @@ create table Companies (
 );
 go
 
+if not exists (select * from sysobjects where xtype = 'U' and name = 'Models')
 create table Models (
 	Id nvarchar(50) not null,
 	Name nvarchar(50) not null,
@@ -16,6 +25,7 @@ create table Models (
 );
 go
 
+if not exists (select * from sysobjects where xtype = 'U' and name = 'Cars')
 create table Cars (
 	Id nvarchar(50) not null,
 	Displacement float null,
@@ -27,6 +37,7 @@ create table Cars (
 );
 go
 
+if not exists (select * from sysobjects where xtype = 'U' and name = 'Users')
 create table Users (
 	Id nvarchar(50) not null,
 	Name nvarchar(50) not null,
@@ -37,6 +48,7 @@ create table Users (
 );
 go
 
+if not exists (select * from sysobjects where xtype = 'U' and name = 'Roles')
 create table Roles (
 	Id nvarchar(50) not null,
 	Name nvarchar(50) not null,
@@ -45,6 +57,7 @@ create table Roles (
 );
 go
 
+if not exists (select * from sysobjects where xtype = 'U' and name = 'UserRoles')
 create table UserRoles (
 	UserId nvarchar(50) not null,
 	RoleId nvarchar(50) not null,

@@ -1,0 +1,28 @@
+services:
+  web:
+    build: .
+    image: fedark/carmanage
+    container_name: car
+    ports:
+      - 7888:80
+    environment:
+      - ConnectionStrings:Default=server=sql,1433;database=CarManage;Trust Server Certificate=true;user=sa;password=CarManage!
+    depends_on:
+      - sql
+
+  sql:
+    build:
+      context: .
+      dockerfile: Dockerfile-sql
+    image: fedark/carmanage/sql
+    container_name: car-sql
+    ports:
+      - 1435:1433
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=CarManage!
+    volumes:
+      - car-sql-data:/var/opt/mssql
+
+volumes:
+  car-sql-data:
