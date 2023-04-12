@@ -10,5 +10,5 @@ public static class DapperAccessExtensions
     {
         services.TryAddScoped<IDataContext>(services => new DapperDataContext(connectionString));
         return services;
-    }    
+    }
 }

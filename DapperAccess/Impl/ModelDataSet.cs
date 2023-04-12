@@ -40,7 +40,7 @@ public class ModelDataSet : IDataSet<Model>
         {
             model.Company = company;
             return model;
-        }, 
+        },
         splitOn: nameof(Company.Id));
     }
 
@@ -53,8 +53,8 @@ public class ModelDataSet : IDataSet<Model>
         {
             model.Company = company;
             return model;
-        }, 
-        new { id }, 
+        },
+        new { id },
         splitOn: nameof(Company.Id))).SingleOrDefault();
     }
 

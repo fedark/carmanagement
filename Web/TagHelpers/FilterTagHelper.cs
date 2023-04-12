@@ -45,7 +45,7 @@ public class FilterTagHelper : TagHelper
         return CreateInput("hidden", name, value);
     }
 
-    private void AppendInput(TagHelperOutput output, string name, object? value) 
+    private void AppendInput(TagHelperOutput output, string name, object? value)
     {
         if (!name.Equals(Name, StringComparison.OrdinalIgnoreCase))
         {

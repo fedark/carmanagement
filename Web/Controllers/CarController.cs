@@ -45,7 +45,7 @@ public class CarController : Controller
             Year = filter?.Year,
             Displacement = filter?.Displacement
         };
-        
+
         var carState = new CarStateModel { SortModel = sortModel, FilterModel = filterModel };
         return View(new CarListViewModel { Cars = viewCars, State = carState });
     }
@@ -130,7 +130,7 @@ public class CarController : Controller
                 return View(viewCar);
             }
         }
-        
+
         var car = mapper_.Map<Car>(viewCar);
         car.Picture = picture;
         car.PictureType = pictureType;
