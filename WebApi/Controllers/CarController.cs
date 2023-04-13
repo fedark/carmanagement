@@ -25,6 +25,20 @@ public class CarController : ControllerBase
         return (await context_.Cars.GetAllAsync()).Select(c => new CarDto(c));
     }
 
+    [HttpGet("{from:min(1)}/{to:min(1)}")]
+    public async Task<IActionResult> Get(int from, int to)
+    {
+        if (from > to)
+        {
+            return BadRequest($"The '{nameof(from)}' parameter should be less or equal the '{nameof(to)}' parameter.");
+        }
+
+        return new JsonResult((await context_.Cars.GetAllAsync())
+            .Skip(from - 1)
+            .Take(to - from + 1)
+            .Select(c => new CarDto(c)));
+    }
+
     [HttpGet("{id}")]
     public async Task<IActionResult> Get(string id)
     {
