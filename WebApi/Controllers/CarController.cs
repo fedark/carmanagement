@@ -30,12 +30,10 @@ public class CarController : ControllerBase
     {
         if (from > to)
         {
-            return BadRequest($"The '{nameof(from)}' parameter should be less or equal the '{nameof(to)}' parameter.");
+            return BadRequest($"The '{nameof(from)}' parameter must be less or equal to the '{nameof(to)}' parameter.");
         }
 
-        return new JsonResult((await context_.Cars.GetAllAsync())
-            .Skip(from - 1)
-            .Take(to - from + 1)
+        return new JsonResult((await context_.Cars.GetRangeAsync(from, to))
             .Select(c => new CarDto(c)));
     }
 

@@ -2,7 +2,6 @@
 using Data.Access.Abstractions;
 using Data.Models;
 using Microsoft.Data.SqlClient;
-using static Dapper.SqlMapper;
 
 namespace DapperAccess.Impl;
 public class ModelDataSet : IDataSet<Model>
@@ -56,6 +55,23 @@ public class ModelDataSet : IDataSet<Model>
         },
         new { id },
         splitOn: nameof(Company.Id))).SingleOrDefault();
+    }
+
+    public Task<IEnumerable<Model>> GetRangeAsync(int from, int to)
+    {
+        ThrowHelper.ValidateRange(from, to);
+
+        var cmd = @$"select m.*, c.* from {tableName_} m
+                    join {referenceTableName_} c on m.CompanyId = c.{nameof(Company.Id)}
+                    group by m.{nameof(Model.Id)}
+                    offset @offset rows
+                    fetch next @fetch rows only";
+        return connection_.QueryAsync<Model, Company, Model>(cmd, (model, company) =>
+        {
+            model.Company = company;
+            return model;
+        },
+        new { Offset = from - 1, Fetch = to - from + 1 });
     }
 
     public async Task UpdateAsync(Model entity)

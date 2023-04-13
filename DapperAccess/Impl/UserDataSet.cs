@@ -61,6 +61,24 @@ public class UserDataSet : IDataSet<User>
         new { id })).SingleOrDefault();
     }
 
+    public Task<IEnumerable<User>> GetRangeAsync(int from, int to)
+    {
+        ThrowHelper.ValidateRange(from, to);
+
+        var cmd = $@"select u.*, r.* from {tableName_} u
+                        join {userRoleTable_} ur on u.{nameof(User.Id)} = ur.UserId
+                        join {roleTable_} r on ur.RoleId = r.{nameof(Role.Id)}
+                        order by u.{nameof(User.Id)}
+                        offset @offset rows
+                        fetch next @fetch rows only";
+        return connection_.QueryAsync<User, Role, User>(cmd, (user, role) =>
+        {
+            user.Roles.Add(role);
+            return user;
+        },
+        new { Offset = from - 1, Fetch = to - from + 1 });
+    }
+
     public async Task UpdateAsync(User entity)
     {
         var cmd = @$"update {tableName_} 
