@@ -4,7 +4,7 @@ using Data.Models;
 using Microsoft.Data.SqlClient;
 
 namespace DapperAccess.Impl;
-public class RoleDataSet : IDataSet<Role>
+public class RoleDataSet : IRoleDataSet
 {
     private readonly SqlConnection connection_;
     private readonly string tableName_;
@@ -66,6 +66,24 @@ public class RoleDataSet : IDataSet<Role>
             return role;
         },
         new { id })).SingleOrDefault();
+    }
+
+    public async Task<Role?> GetByNameAsync(string name)
+    {
+        var cmd = $@"select r.*, u.* from {tableName_} r
+                        left join {userRoleTable_} ur on r.{nameof(Role.Id)} = ur.RoleId
+                        left join {userTable_} u on ur.UserId = u.{nameof(User.Id)}
+                        where @r.{nameof(Role.Name)} = @name";
+        return (await connection_.QueryAsync<Role, User?, Role>(cmd, (role, user) =>
+        {
+            if (user is not null)
+            {
+                role.Users.Add(user);
+            }
+
+            return role;
+        },
+        new { name })).SingleOrDefault();
     }
 
     public Task<IEnumerable<Role>> GetRangeAsync(int from, int to)

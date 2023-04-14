@@ -28,7 +28,7 @@ public class AuthController : ControllerBase
             return BadRequest();
         }
 
-        if (await context_.GetUserByNameAsync(model.Name) is not null)
+        if (await context_.Users.GetByNameAsync(model.Name) is not null)
         {
             return BadRequest($"The user with name '{model.Name}' is already registered.");
         }
@@ -52,7 +52,7 @@ public class AuthController : ControllerBase
             return BadRequest();
         }
 
-        var user = await context_.GetUserByNameAsync(model.Name);
+        var user = await context_.Users.GetByNameAsync(model.Name);
         if (user is null)
         {
             return Unauthorized($"The user with name '{model.Name}' is not registered");

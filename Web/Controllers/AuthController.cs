@@ -32,7 +32,7 @@ public class AuthController : Controller
             return View(model);
         }
 
-        var user = await context_.GetUserByNameAsync(model.UserName);
+        var user = await context_.Users.GetByNameAsync(model.UserName);
         if (user is not null)
         {
             ViewData["Status"] = "The user name is already taken";
@@ -65,7 +65,7 @@ public class AuthController : Controller
             return View(model);
         }
 
-        var user = await context_.GetUserByNameAsync(model.UserName);
+        var user = await context_.Users.GetByNameAsync(model.UserName);
         if (user is null)
         {
             ViewData["Status"] = "The user is not registered";
