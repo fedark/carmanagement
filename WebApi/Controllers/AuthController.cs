@@ -55,13 +55,13 @@ public class AuthController : ControllerBase
         var user = await context_.GetUserByNameAsync(model.Name);
         if (user is null)
         {
-            return Unauthorized();
+            return Unauthorized($"The user with name '{model.Name}' is not registered");
         }
 
         var passwordHasher = new PasswordHasher<User>();
         if (passwordHasher.VerifyHashedPassword(user, user.PasswordHash, model.Password) == PasswordVerificationResult.Failed)
         {
-            return Unauthorized();
+            return Unauthorized($"Incorrect password for user '{user.Name}'");
         }
 
         var jwt = jwtService_.GetToken(user);

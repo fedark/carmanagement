@@ -9,7 +9,6 @@ namespace WebApi.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-[Authorize]
 public class CarController : ControllerBase
 {
     private readonly IDataContext context_;
@@ -45,12 +44,13 @@ public class CarController : ControllerBase
         var car = await context_.Cars.GetAsync(id);
         if (car is null)
         {
-            return NotFound($"The object with '{id}' was not found.");
+            return NotFound($"The object with ID '{id}' was not found.");
         }
 
         return new JsonResult(new CarResponceModel(car));
     }
 
+    [Authorize]
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] CarRequestModel model)
     {
@@ -65,7 +65,7 @@ public class CarController : ControllerBase
         return CreatedAtAction(nameof(Get), new { car.Id }, new CarResponceModel(car));
     }
 
-
+    [Authorize]
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(string id, [FromBody] CarRequestModel model)
     {
@@ -77,7 +77,7 @@ public class CarController : ControllerBase
         var car = await context_.Cars.GetAsync(id);
         if (car is null)
         {
-            return NotFound($"The object with '{id}' was not found.");
+            return NotFound($"The object with ID '{id}' was not found.");
         }
 
         car = mapper_.Map<Car>(model);
@@ -88,6 +88,7 @@ public class CarController : ControllerBase
         return Ok();
     }
 
+    [Authorize(Roles = "owner")]
     [HttpDelete("{id}")]
     public Task Delete(string id)
     {

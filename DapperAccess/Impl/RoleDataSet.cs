@@ -37,11 +37,15 @@ public class RoleDataSet : IDataSet<Role>
     public Task<IEnumerable<Role>> GetAllAsync()
     {
         var cmd = $@"select r.*, u.* from {tableName_} r
-                        join {userRoleTable_} ur on r.{nameof(Role.Id)} = ur.RoleId
-                        join {userTable_} u on ur.UserId = u.{nameof(User.Id)}";
-        return connection_.QueryAsync<Role, User, Role>(cmd, (role, user) =>
+                        left join {userRoleTable_} ur on r.{nameof(Role.Id)} = ur.RoleId
+                        left join {userTable_} u on ur.UserId = u.{nameof(User.Id)}";
+        return connection_.QueryAsync<Role, User?, Role>(cmd, (role, user) =>
         {
-            role.Users.Add(user);
+            if (user is not null)
+            {
+                role.Users.Add(user);
+            }
+
             return role;
         });
     }
@@ -49,12 +53,16 @@ public class RoleDataSet : IDataSet<Role>
     public async Task<Role?> GetAsync(string id)
     {
         var cmd = $@"select r.*, u.* from {tableName_} r
-                        join {userRoleTable_} ur on r.{nameof(Role.Id)} = ur.RoleId
-                        join {userTable_} u on ur.UserId = u.{nameof(User.Id)}
+                        left join {userRoleTable_} ur on r.{nameof(Role.Id)} = ur.RoleId
+                        left join {userTable_} u on ur.UserId = u.{nameof(User.Id)}
                         where @r.{nameof(Role.Id)} = @id";
-        return (await connection_.QueryAsync<Role, User, Role>(cmd, (role, user) =>
+        return (await connection_.QueryAsync<Role, User?, Role>(cmd, (role, user) =>
         {
-            role.Users.Add(user);
+            if (user is not null)
+            {
+                role.Users.Add(user);
+            }
+
             return role;
         },
         new { id })).SingleOrDefault();
@@ -65,14 +73,18 @@ public class RoleDataSet : IDataSet<Role>
         ThrowHelper.ValidateRange(from, to);
 
         var cmd = $@"select r.*, u.* from {tableName_} r
-                        join {userRoleTable_} ur on r.{nameof(Role.Id)} = ur.RoleId
-                        join {userTable_} u on ur.UserId = u.{nameof(User.Id)}
+                        left join {userRoleTable_} ur on r.{nameof(Role.Id)} = ur.RoleId
+                        left join {userTable_} u on ur.UserId = u.{nameof(User.Id)}
                         order by r.{nameof(Role.Id)}
                         offset @offset rows
                         fetch next @fetch rows only";
-        return connection_.QueryAsync<Role, User, Role>(cmd, (role, user) =>
+        return connection_.QueryAsync<Role, User?, Role>(cmd, (role, user) =>
         {
-            role.Users.Add(user);
+            if (user is not null)
+            {
+                role.Users.Add(user);
+            }
+
             return role;
         },
         new { Offset = from - 1, Fetch = to - from + 1 });

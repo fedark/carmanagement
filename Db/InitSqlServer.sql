@@ -66,3 +66,9 @@ create table UserRoles (
 	constraint FK_UserRoles_RoleId foreign key (RoleId) references Roles (Id) on delete cascade
 );
 go
+
+insert into Roles Values ('beaaa4aa-da9c-4885-a2b8-ad1d84344910', 'owner');
+insert into Users Values ('03422484-4f6c-4ef7-b4f4-a6ee8c3a71a9', 'owner', 'AQAAAAIAAYagAAAAEMSLsAhjpCkQQFLgYzEayGuftskIWEFosvCtFjNkeTqM1ViBeMI8t36f+2qRPR6Z0A==', 1);
+go
+
+insert into UserRoles Values ('03422484-4f6c-4ef7-b4f4-a6ee8c3a71a9', 'beaaa4aa-da9c-4885-a2b8-ad1d84344910');
