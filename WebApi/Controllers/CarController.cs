@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Data.Access.Abstractions;
 using Data.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.Models;
 
@@ -8,6 +9,7 @@ namespace WebApi.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[Authorize]
 public class CarController : ControllerBase
 {
     private readonly IDataContext context_;
