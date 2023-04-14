@@ -1,6 +1,6 @@
 ﻿namespace WebApi.Models;
 
-public class CarInputModel
+public class CarRequestModel
 {
     public string Company { get; set; } = default!;
     public string Model { get; set; } = default!;

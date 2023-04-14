@@ -7,7 +7,7 @@ public class CarMappingProfile : Profile
 {
     public CarMappingProfile()
     {
-        CreateMap<CarInputModel, Car>()
+        CreateMap<CarRequestModel, Car>()
             .ForMember(c => c.Picture, e => e.MapFrom(c => new byte[] { 1 }))
             .ForMember(c => c.PictureType, e => e.MapFrom(c => "image/png"))
             .ForPath(c => c.Model.Name, e => e.MapFrom(c => c.Model))

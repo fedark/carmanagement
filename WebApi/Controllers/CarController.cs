@@ -20,9 +20,9 @@ public class CarController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IEnumerable<CarDto>> Get()
+    public async Task<IEnumerable<CarResponceModel>> Get()
     {
-        return (await context_.Cars.GetAllAsync()).Select(c => new CarDto(c));
+        return (await context_.Cars.GetAllAsync()).Select(c => new CarResponceModel(c));
     }
 
     [HttpGet("{from:min(1)}/{to:min(1)}")]
@@ -34,7 +34,7 @@ public class CarController : ControllerBase
         }
 
         return new JsonResult((await context_.Cars.GetRangeAsync(from, to))
-            .Select(c => new CarDto(c)));
+            .Select(c => new CarResponceModel(c)));
     }
 
     [HttpGet("{id}")]
@@ -46,11 +46,11 @@ public class CarController : ControllerBase
             return NotFound($"The object with '{id}' was not found.");
         }
 
-        return new JsonResult(new CarDto(car));
+        return new JsonResult(new CarResponceModel(car));
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post([FromBody] CarInputModel model)
+    public async Task<IActionResult> Post([FromBody] CarRequestModel model)
     {
         if (!ModelState.IsValid)
         {
@@ -60,12 +60,12 @@ public class CarController : ControllerBase
         var car = mapper_.Map<Car>(model);
         await context_.Cars.AddAsync(car);
 
-        return CreatedAtAction(nameof(Get), new { car.Id });
+        return CreatedAtAction(nameof(Get), new { car.Id }, new CarResponceModel(car));
     }
 
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Put(string id, [FromBody] CarInputModel model)
+    public async Task<IActionResult> Put(string id, [FromBody] CarRequestModel model)
     {
         if (!ModelState.IsValid)
         {
