@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using DapperAccess.Impl;
 using Data.Access.Abstractions;
 using Data.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -88,7 +89,7 @@ public class CarController : ControllerBase
         return Ok();
     }
 
-    [Authorize(Roles = "owner")]
+    [Authorize(Roles = $"{RoleDefaults.Owner},{RoleDefaults.Admin}")]
     [HttpDelete("{id}")]
     public Task Delete(string id)
     {

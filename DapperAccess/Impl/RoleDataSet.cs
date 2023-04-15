@@ -55,7 +55,7 @@ public class RoleDataSet : IRoleDataSet
         var cmd = $@"select r.*, u.* from {tableName_} r
                         left join {userRoleTable_} ur on r.{nameof(Role.Id)} = ur.RoleId
                         left join {userTable_} u on ur.UserId = u.{nameof(User.Id)}
-                        where @r.{nameof(Role.Id)} = @id";
+                        where r.{nameof(Role.Id)} = @id";
         return (await connection_.QueryAsync<Role, User?, Role>(cmd, (role, user) =>
         {
             if (user is not null)
@@ -73,7 +73,7 @@ public class RoleDataSet : IRoleDataSet
         var cmd = $@"select r.*, u.* from {tableName_} r
                         left join {userRoleTable_} ur on r.{nameof(Role.Id)} = ur.RoleId
                         left join {userTable_} u on ur.UserId = u.{nameof(User.Id)}
-                        where @r.{nameof(Role.Name)} = @name";
+                        where r.{nameof(Role.Name)} = @name";
         return (await connection_.QueryAsync<Role, User?, Role>(cmd, (role, user) =>
         {
             if (user is not null)

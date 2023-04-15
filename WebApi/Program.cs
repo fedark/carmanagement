@@ -11,6 +11,7 @@ var connectionString = builder.Configuration.GetConnectionString("Default")
 
 builder.Services.AddDapperDataContext(connectionString);
 builder.Services.AddAutoMapper(typeof(CarMappingProfile));
+builder.Services.AddAutoMapper(typeof(UserMappingProfile));
 
 builder.Services.Configure<JwtValidationOptions>(builder.Configuration.GetRequiredSection(nameof(JwtValidationOptions)));
 
