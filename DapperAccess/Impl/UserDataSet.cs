@@ -5,7 +5,7 @@ using Data.Models;
 using Microsoft.Data.SqlClient;
 
 namespace DapperAccess.Impl;
-public class UserDataSet : IDataSet<User>
+public class UserDataSet : IUserDataSet
 {
     private readonly SqlConnection connection_;
     private readonly string tableName_;
@@ -38,27 +38,75 @@ public class UserDataSet : IDataSet<User>
     public Task<IEnumerable<User>> GetAllAsync()
     {
         var cmd = $@"select u.*, r.* from {tableName_} u
-                        join {userRoleTable_} ur on u.{nameof(User.Id)} = ur.UserId
-                        join {roleTable_} r on ur.RoleId = r.{nameof(Role.Id)}";
-        return connection_.QueryAsync<User, Role, User>(cmd, (user, role) =>
+                        left join {userRoleTable_} ur on u.{nameof(User.Id)} = ur.UserId
+                        left join {roleTable_} r on ur.RoleId = r.{nameof(Role.Id)}";
+        return connection_.QueryAsync<User, Role?, User>(cmd, (user, role) =>
         {
-            user.Roles.Add(role);
+            if (role is not null)
+            {
+                user.Roles.Add(role);
+            }
+
             return user;
         });
     }
 
     public async Task<User?> GetAsync(string id)
     {
-        var cmd = $@"select u.*, r.* from {tableName_}
-                        join {userRoleTable_} ur on u.{nameof(User.Id)} = ur.UserId
-                        join {roleTable_} r on ur.RoleId = r.{nameof(Role.Id)}
+        var cmd = $@"select u.*, r.* from {tableName_} u
+                        left join {userRoleTable_} ur on u.{nameof(User.Id)} = ur.UserId
+                        left join {roleTable_} r on ur.RoleId = r.{nameof(Role.Id)}
                         where u.{nameof(User.Id)} = @id";
-        return (await connection_.QueryAsync<User, Role, User>(cmd, (user, role) =>
+        return (await connection_.QueryAsync<User, Role?, User>(cmd, (user, role) =>
         {
-            user.Roles.Add(role);
+            if (role is not null)
+            {
+                user.Roles.Add(role);
+            }
+
             return user;
         },
         new { id })).SingleOrDefault();
+    }
+
+    public async Task<User?> GetByNameAsync(string name)
+    {
+        var cmd = $@"select u.*, r.* from {tableName_} u
+                        left join {userRoleTable_} ur on u.{nameof(User.Id)} = ur.UserId
+                        left join {roleTable_} r on ur.RoleId = r.{nameof(Role.Id)}
+                        where u.{nameof(User.Name)} = @name";
+        return (await connection_.QueryAsync<User, Role?, User>(cmd, (user, role) =>
+        {
+            if (role is not null)
+            {
+                user.Roles.Add(role);
+            }
+
+            return user;
+        },
+        new { name })).SingleOrDefault();
+    }
+
+    public Task<IEnumerable<User>> GetRangeAsync(int from, int to)
+    {
+        ThrowHelper.ValidateRange(from, to);
+
+        var cmd = $@"select u.*, r.* from {tableName_} u
+                        left join {userRoleTable_} ur on u.{nameof(User.Id)} = ur.UserId
+                        left join {roleTable_} r on ur.RoleId = r.{nameof(Role.Id)}
+                        order by u.{nameof(User.Id)}
+                        offset @offset rows
+                        fetch next @fetch rows only";
+        return connection_.QueryAsync<User, Role?, User>(cmd, (user, role) =>
+        {
+            if (role is not null)
+            {
+                user.Roles.Add(role);
+            }
+
+            return user;
+        },
+        new { Offset = from - 1, Fetch = to - from + 1 });
     }
 
     public async Task UpdateAsync(User entity)

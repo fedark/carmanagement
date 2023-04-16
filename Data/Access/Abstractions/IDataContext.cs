@@ -7,8 +7,6 @@ public interface IDataContext : IDisposable
     IDataSet<Company> Companies { get; }
     IDataSet<Model> Models { get; }
 
-    IDataSet<User> Users { get; }
-    IDataSet<Role> Roles { get; }
-
-    Task<User?> GetUserByNameAsync(string name);
+    IUserDataSet Users { get; }
+    IRoleDataSet Roles { get; }
 }

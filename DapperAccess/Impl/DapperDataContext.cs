@@ -20,8 +20,8 @@ public class DapperDataContext : IDataContext
     public IDataSet<Company> Companies => new CompanyDataSet(connection_, CompanyTable);
     public IDataSet<Model> Models => new ModelDataSet(connection_, ModelTable, CompanyTable);
 
-    public IDataSet<User> Users => new UserDataSet(connection_, UserTable, UserRoleTable, RoleTable);
-    public IDataSet<Role> Roles => new RoleDataSet(connection_, RoleTable, UserRoleTable, UserTable);
+    public IUserDataSet Users => new UserDataSet(connection_, UserTable, UserRoleTable, RoleTable);
+    public IRoleDataSet Roles => new RoleDataSet(connection_, RoleTable, UserRoleTable, UserTable);
 
     public DapperDataContext(string connectionString)
     {
@@ -32,11 +32,5 @@ public class DapperDataContext : IDataContext
     public void Dispose()
     {
         connection_.Close();
-    }
-
-    public async Task<User?> GetUserByNameAsync(string name)
-    {
-        var cmd = $"select * from {UserTable} where {nameof(User.Name)} = @name";
-        return (await connection_.QueryAsync<User>(cmd, new { name })).SingleOrDefault();
     }
 }

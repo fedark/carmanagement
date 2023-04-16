@@ -2,7 +2,6 @@
 using Data.Access.Abstractions;
 using Data.Models;
 using Microsoft.Data.SqlClient;
-using static Dapper.SqlMapper;
 
 namespace DapperAccess.Impl;
 public class CarDataSet : IDataSet<Car>
@@ -64,6 +63,26 @@ public class CarDataSet : IDataSet<Car>
         },
         new { id },
         splitOn: "Id")).SingleOrDefault();
+    }
+
+    public Task<IEnumerable<Car>> GetRangeAsync(int from, int to)
+    {
+        ThrowHelper.ValidateRange(from, to);
+
+        var cmd = @$"select c.*, m.*, p.*
+                    from {tableName_} c
+                    join {referenceTableName_} m on c.ModelId = m.{nameof(Model.Id)}
+                    join {indirectReferenceTableName_} p on m.CompanyId = p.{nameof(Company.Id)}
+                    order by c.{nameof(Car.Id)}
+                    offset @offset rows
+                    fetch next @fetch rows only";
+        return connection_.QueryAsync<Car, Model, Company, Car>(cmd, (car, model, company) =>
+        {
+            model.Company = company;
+            car.Model = model;
+            return car;
+        },
+        new { Offset = from - 1, Fetch = to - from + 1 });
     }
 
     public async Task UpdateAsync(Car entity)

@@ -39,6 +39,17 @@ public class CompanyDataSet : IDataSet<Company>
         return (await connection_.QueryAsync<Company>(cmd, new { id })).SingleOrDefault();
     }
 
+    public Task<IEnumerable<Company>> GetRangeAsync(int from, int to)
+    {
+        ThrowHelper.ValidateRange(from, to);
+
+        var cmd = $@"select * from {tableName_}
+                        order by {nameof(Company.Id)}
+                        offset @offset rows
+                        fetch next @fetch rows only";
+        return connection_.QueryAsync<Company>(cmd, new { Offset = from - 1, Fetch = to - from + 1 });
+    }
+
     public Task UpdateAsync(Company entity)
     {
         var cmd = $"update {tableName_} set {nameof(Company.Name)} = @name where {nameof(Company.Id)} = @id";
