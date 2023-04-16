@@ -3,13 +3,12 @@ services:
     build:
       context: .
       dockerfile: Dockerfile-api
-    image: fedark/carmanage/api:dev
+    image: fedark/carmanage/api
     container_name: car-api
     ports:
       - 7890:80
     environment:
       - ConnectionStrings:Default=server=sql,1433;database=CarManage;Trust Server Certificate=true;user=sa;password=CarManage!
-      - ASPNETCORE_ENVIRONMENT=Development
     depends_on:
       - sql
 
