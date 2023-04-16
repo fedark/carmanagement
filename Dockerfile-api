@@ -1,0 +1,20 @@
+FROM mcr.microsoft.com/dotnet/sdk:7.0 as sdk
+WORKDIR /carmanage
+
+COPY ./Data/*.csproj ./Data/
+COPY ./DapperAccess/*.csproj ./DapperAccess/
+COPY ./WebApi/*.csproj ./WebApi/
+RUN dotnet restore ./WebApi/WebApi.csproj
+
+COPY ./Data/. ./Data/
+COPY ./DapperAccess/. ./DapperAccess/
+COPY ./WebApi/. ./WebApi/
+
+WORKDIR /carmanage/WebApi
+RUN dotnet publish -c Release -o publish
+
+FROM mcr.microsoft.com/dotnet/aspnet:7.0 as runtime
+WORKDIR /carmanage
+COPY --from=sdk carmanage/WebApi/publish ./
+
+ENTRYPOINT [ "dotnet", "WebApi.dll" ]

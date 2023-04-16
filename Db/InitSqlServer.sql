@@ -67,9 +67,16 @@ create table UserRoles (
 );
 go
 
+if not exists (select * from Roles where Name = 'owner')
 insert into Roles Values ('beaaa4aa-da9c-4885-a2b8-ad1d84344910', 'owner');
+
+if not exists (select * from Roles where Name = 'admin')
 insert into Roles Values ('32c8735f-65c4-46c0-83ee-7d0f32d1fab3', 'admin');
+
+if not exists (select * from Users where Name = 'owner')
 insert into Users Values ('03422484-4f6c-4ef7-b4f4-a6ee8c3a71a9', 'owner', 'AQAAAAIAAYagAAAAEMSLsAhjpCkQQFLgYzEayGuftskIWEFosvCtFjNkeTqM1ViBeMI8t36f+2qRPR6Z0A==', 1);
 go
 
+if not exists (select * from UserRoles where UserId = '03422484-4f6c-4ef7-b4f4-a6ee8c3a71a9' or RoleId = 'beaaa4aa-da9c-4885-a2b8-ad1d84344910')
 insert into UserRoles Values ('03422484-4f6c-4ef7-b4f4-a6ee8c3a71a9', 'beaaa4aa-da9c-4885-a2b8-ad1d84344910');
+go
